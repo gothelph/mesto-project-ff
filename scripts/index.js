@@ -10,12 +10,13 @@ const profileEditButton = document.querySelector(".profile__edit-button");
 const profileAddButton = document.querySelector(".profile__add-button");
 
 // @todo: Функция создания карточки
-function cardCreate(name, link) {
+function cardCreate({ name, link }) {
   const clonePattern = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
   clonePattern.querySelector(".card__title").textContent = name;
   clonePattern.querySelector(".card__image").src = link;
+  clonePattern.querySelector(".card__image").alt = name;
   //Переключатель лайков
   const likeBtn = clonePattern.querySelector(".card__like-button");
   likeBtn.addEventListener("click", (event) => {
@@ -24,10 +25,7 @@ function cardCreate(name, link) {
 
   // @todo: Функция удаления карточки
   const deleteBtn = clonePattern.querySelector(".card__delete-button");
-  deleteBtn.addEventListener("click", (event) => {
-    clonePattern.remove();
-  });
-
+  deleteBtn.addEventListener("click", deleteCard);
   const imgCard = clonePattern.querySelector(".card__image");
   imgCard.addEventListener("click", (event) => {
     imgPopup.querySelector(".popup__caption").textContent = name;
@@ -39,13 +37,21 @@ function cardCreate(name, link) {
     openPopup(imgPopup);
   });
 
-  placeContainer.append(clonePattern);
   return clonePattern;
+}
+
+function renderCard(cardData) {
+  const card = cardCreate(cardData);
+  placeContainer.append(card);
+}
+
+function deleteCard(event) {
+  event.target.parentNode.remove();
 }
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach((card) => {
-  cardCreate(card.name, card.link);
+  renderCard(card);
 });
 
 //Всплывающее окно
@@ -71,7 +77,7 @@ profileAddButton.addEventListener("click", (event) => {
     event.preventDefault();
     const name = form["place-name"].value;
     const link = form["link"].value;
-    cardCreate(name, link);
+    renderCard({ name, link });
     closePopup(cardPopup);
   });
   const closeBtn = cardPopup.querySelector(".popup__close");
