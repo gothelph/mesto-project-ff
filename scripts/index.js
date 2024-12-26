@@ -46,7 +46,7 @@ function renderCard(cardData) {
 }
 
 function deleteCard(event) {
-  event.target.parentNode.remove();
+  event.target.closest(".card").remove();
 }
 
 // @todo: Вывести карточки на страницу
