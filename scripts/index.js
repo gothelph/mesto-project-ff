@@ -66,6 +66,14 @@ profileEditButton.addEventListener("click", (event) => {
 
 profileAddButton.addEventListener("click", (event) => {
   openPopup(cardPopup);
+  const form = cardPopup.querySelector(".popup__form");
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = form["place-name"].value;
+    const link = form["link"].value;
+    cardCreate(name, link);
+    closePopup(cardPopup);
+  });
   const closeBtn = cardPopup.querySelector(".popup__close");
   closeBtn.addEventListener("click", (event) => {
     closePopup(cardPopup);
