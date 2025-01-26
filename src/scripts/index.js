@@ -1,5 +1,5 @@
-import { initialCards, cardCreate } from "./cards";
-import { openModal, closeModal } from "./modal";
+import { initialCards, cardCreate } from "./card";
+import { openModal, closeModal, initPopups } from "./modal";
 
 // @todo: Темплейт карточки
 const placeContainer = document.querySelector(".places__list");
@@ -9,38 +9,44 @@ const cardPopup = document.querySelector(".popup_type_new-card");
 // @todo: вывод карточек
 const profileEditButton = document.querySelector(".profile__edit-button");
 const profileAddButton = document.querySelector(".profile__add-button");
+const profileName = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
 //@todo submit
-const editProfileFormElement = editPopup.querySelector(".popup__form");
-const addCardFormElement = cardPopup.querySelector(".popup__form");
-const nameInput = editProfileFormElement.querySelector(
-  ".popup__input_type_name"
-);
-const jobInput = editProfileFormElement.querySelector(
-  ".popup__input_type_description"
-);
+const profileForm = document.forms["edit-profile"];
+const cardForm = document.forms["new-place"];
+const nameInput = profileForm.querySelector(".popup__input_type_name");
+const jobInput = profileForm.querySelector(".popup__input_type_description");
 
-function renderCard(cardData) {
-  const card = cardCreate(cardData);
-  placeContainer.append(card);
-}
+initPopups();
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach((card) => renderCard(card));
 
-profileEditButton.addEventListener("click", () => openModal(editPopup));
+cardForm.addEventListener("submit", handleAddCardFormSubmit);
+profileForm.addEventListener("submit", handleEditProfileFormSubmit);
 
+profileEditButton.addEventListener("click", editProfileModalOpen);
 profileAddButton.addEventListener("click", () => openModal(cardPopup));
+
+function renderCard(cardData) {
+  const card = cardCreate(cardData, deleteCard, likeCard, openCard);
+  placeContainer.prepend(card);
+}
+
+function editProfileModalOpen() {
+  nameInput.value = profileName.textContent;
+  jobInput.value = profileDescription.textContent;
+  openModal(editPopup);
+}
 
 function handleAddCardFormSubmit(evt) {
   evt.preventDefault();
-  const form = evt.target;
-  const name = form["place-name"].value;
-  const link = form["link"].value;
+  const name = cardForm["place-name"].value;
+  const link = cardForm["link"].value;
   renderCard({ name, link });
   closeModal(cardPopup);
+  cardForm.reset();
 }
-
-addCardFormElement.addEventListener("submit", handleAddCardFormSubmit);
 
 // Реализуем обработчик события submit при отправке формы по следующему шаблону.
 
@@ -49,14 +55,26 @@ function handleEditProfileFormSubmit(evt) {
   // Получите значение полей jobInput и nameInput из свойства value
   const name = nameInput.value;
   const job = jobInput.value;
-  // Выберите элементы, куда должны быть вставлены значения полей
-  const profileName = document.querySelector(".profile__title");
-  const profileDescription = document.querySelector(".profile__description");
   // Вставьте новые значения с помощью textContent
   profileName.textContent = name;
   profileDescription.textContent = job;
 
   closeModal(editPopup);
+  profileForm.reset();
 }
 
-editProfileFormElement.addEventListener("submit", handleEditProfileFormSubmit);
+//Переключатель лайков
+function likeCard(likeBtn) {
+  likeBtn.classList.toggle("card__like-button_is-active");
+}
+
+function openCard(name, link) {
+  const popup = document.querySelector(".popup_type_image");
+  popup.querySelector(".popup__caption").textContent = name;
+  popup.querySelector(".popup__image").src = link;
+  openModal(popup);
+}
+
+function deleteCard(cardElement) {
+  cardElement.remove();
+}

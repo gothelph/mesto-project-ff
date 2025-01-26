@@ -1,35 +1,36 @@
 export function openModal(popup) {
-  popup.classList.add("popup_is-animated");
-  popup.querySelector(".popup__content").classList.add("popup_is-animated");
   popup.classList.add("popup_is-opened");
-  popup.querySelector(".popup__content").classList.add("popup_is-opened");
+  document.addEventListener("keydown", handleEscClose);
 }
 
 //закрытие окна
 export function closeModal(popup) {
   popup.classList.remove("popup_is-opened");
-  popup.querySelector(".popup__content").classList.remove("popup_is-opened");
+  document.removeEventListener("keydown", handleEscClose);
 }
 
-const popups = document.querySelectorAll(".popup");
-
-// Закрытие по клику на оверлей
-popups.forEach((popup) => {
-  popup.addEventListener("click", () => {
-    closeModal(popup);
-  });
-
-  popup.querySelector(".popup__content").addEventListener("click", (event) => {
-    event.stopPropagation();
-  });
-
-  popup.querySelector(".popup__close").addEventListener("click", () => {
-    closeModal(popup);
-  });
-});
-
-document.addEventListener("keydown", (event) => {
+function handleEscClose(event) {
   if (event.code === "Escape") {
-    popups.forEach((popup) => closeModal(popup));
+    const popup = document.querySelector(".popup_is-opened");
+    closeModal(popup);
   }
-});
+}
+
+export function initPopups() {
+  const popups = document.querySelectorAll(".popup");
+
+  // Закрытие по клику на оверлей
+  popups.forEach((popup) => {
+    popup.classList.add("popup_is-animated");
+
+    popup.addEventListener("mousedown", (event) => {
+      if (event.target.classList.contains("popup")) {
+        closeModal(popup);
+      }
+    });
+
+    popup.querySelector(".popup__close").addEventListener("click", () => {
+      closeModal(popup);
+    });
+  });
+}

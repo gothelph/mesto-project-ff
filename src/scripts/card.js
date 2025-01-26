@@ -1,5 +1,3 @@
-import { openModal } from "./modal";
-
 export const initialCards = [
   {
     name: "Норвежские фьёрды",
@@ -28,9 +26,8 @@ export const initialCards = [
 ];
 
 // @todo: Функция создания карточки
-export function cardCreate({ name, link }) {
+export function cardCreate({ name, link }, remove, like, open) {
   const cardTemplate = document.querySelector("#card-template").content;
-  const imgPopup = document.querySelector(".popup_type_image");
 
   const clonePattern = cardTemplate
     .querySelector(".places__item")
@@ -42,25 +39,14 @@ export function cardCreate({ name, link }) {
   imgCard.src = link;
   imgCard.alt = name;
 
-  //Переключатель лайков
   const likeBtn = clonePattern.querySelector(".card__like-button");
-  likeBtn.addEventListener("click", () => {
-    likeBtn.classList.toggle("card__like-button_is-active");
-  });
+  likeBtn.addEventListener("click", () => like(likeBtn));
 
   // @todo: Функция удаления карточки
   const deleteBtn = clonePattern.querySelector(".card__delete-button");
-  deleteBtn.addEventListener("click", deleteCard);
+  deleteBtn.addEventListener("click", () => remove(clonePattern));
 
-  imgCard.addEventListener("click", () => {
-    imgPopup.querySelector(".popup__caption").textContent = name;
-    imgPopup.querySelector(".popup__image").src = link;
-    openModal(imgPopup);
-  });
+  imgCard.addEventListener("click", () => open(name, link));
 
   return clonePattern;
-}
-
-function deleteCard(event) {
-  event.target.closest(".card").remove();
 }
