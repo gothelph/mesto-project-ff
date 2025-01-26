@@ -1,4 +1,6 @@
-const initialCards = [
+import { openModal } from "./modal";
+
+export const initialCards = [
   {
     name: "Норвежские фьёрды",
     link: "https://plus.unsplash.com/premium_photo-1661963290283-a1883fb9582a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -24,3 +26,41 @@ const initialCards = [
     link: "https://images.unsplash.com/photo-1521336575822-6da63fb45455?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 ];
+
+// @todo: Функция создания карточки
+export function cardCreate({ name, link }) {
+  const cardTemplate = document.querySelector("#card-template").content;
+  const imgPopup = document.querySelector(".popup_type_image");
+
+  const clonePattern = cardTemplate
+    .querySelector(".places__item")
+    .cloneNode(true);
+  clonePattern.querySelector(".card__title").textContent = name;
+
+  const imgCard = clonePattern.querySelector(".card__image");
+
+  imgCard.src = link;
+  imgCard.alt = name;
+
+  //Переключатель лайков
+  const likeBtn = clonePattern.querySelector(".card__like-button");
+  likeBtn.addEventListener("click", () => {
+    likeBtn.classList.toggle("card__like-button_is-active");
+  });
+
+  // @todo: Функция удаления карточки
+  const deleteBtn = clonePattern.querySelector(".card__delete-button");
+  deleteBtn.addEventListener("click", deleteCard);
+
+  imgCard.addEventListener("click", () => {
+    imgPopup.querySelector(".popup__caption").textContent = name;
+    imgPopup.querySelector(".popup__image").src = link;
+    openModal(imgPopup);
+  });
+
+  return clonePattern;
+}
+
+function deleteCard(event) {
+  event.target.closest(".card").remove();
+}

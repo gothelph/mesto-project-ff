@@ -1,4 +1,5 @@
 .popup__content {
+  /* flex-direction: column; */
   max-width: 430px;
   width: 100%;
   min-height: 330px;

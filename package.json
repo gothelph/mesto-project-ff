@@ -1,0 +1,40 @@
+{
+  "name": "mesto-project-ff",
+  "version": "1.0.0",
+  "description": "praktikum",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gothelph/mesto-project-ff.git"
+  },
+  "keywords": [
+    "praktikum",
+    "yandex"
+  ],
+  "author": "gothelph",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gothelph/mesto-project-ff/issues"
+  },
+  "homepage": "https://github.com/gothelph/mesto-project-ff#readme",
+  "devDependencies": {
+    "@babel/core": "^7.26.7",
+    "@babel/preset-env": "^7.26.7",
+    "autoprefixer": "^10.4.20",
+    "babel-loader": "^9.2.1",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^7.1.2",
+    "cssnano": "^7.0.6",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "postcss-loader": "^8.1.1",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  }
+}
