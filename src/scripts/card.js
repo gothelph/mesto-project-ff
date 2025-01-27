@@ -29,12 +29,19 @@ export const initialCards = [
 
 // @todo: Функция создания карточки
 
-export function createCard({ name, link }, remove, like, open) {
-  const cardTemplate = document.querySelector("#card-template").content;
-
-  const clonePattern = cardTemplate
-    .querySelector(".places__item")
+function getTemplate() {
+  return document
+    .querySelector("#card-template")
+    .content.querySelector(".places__item")
     .cloneNode(true);
+}
+
+export function createCard(
+  { name, link },
+  { onDeleteCard, onLikeCard, onOpenPreview } = {}
+) {
+  const clonePattern = getTemplate();
+
   clonePattern.querySelector(".card__title").textContent = name;
 
   const imgCard = clonePattern.querySelector(".card__image");
@@ -43,24 +50,24 @@ export function createCard({ name, link }, remove, like, open) {
   imgCard.alt = name;
 
   const likeBtn = clonePattern.querySelector(".card__like-button");
-  likeBtn.addEventListener("click", () => like(likeBtn));
+  likeBtn.addEventListener("click", () => onLikeCard?.(likeBtn));
 
   // @todo: Функция удаления карточки
   const deleteBtn = clonePattern.querySelector(".card__delete-button");
-  deleteBtn.addEventListener("click", () => remove(clonePattern));
+  deleteBtn.addEventListener("click", () => onDeleteCard?.(clonePattern));
 
-  imgCard.addEventListener("click", () => open(name, link));
+  imgCard.addEventListener("click", () => onOpenPreview?.(name, link));
 
   return clonePattern;
 }
 
 //Переключатель лайков
 
-export function likeCard(likeBtn) {
+export function onLikeCard(likeBtn) {
   likeBtn.classList.toggle("card__like-button_is-active");
 }
 
-export function openCard(name, link) {
+export function onOpenPreview(name, link) {
   const popup = document.querySelector(".popup_type_image");
   const image = popup.querySelector(".popup__image"); // Получаем элемент изображения
   popup.querySelector(".popup__caption").textContent = name;
@@ -70,6 +77,6 @@ export function openCard(name, link) {
   openModal(popup);
 }
 
-export function deleteCard(cardElement) {
+export function onDeleteCard(cardElement) {
   cardElement.remove();
 }
