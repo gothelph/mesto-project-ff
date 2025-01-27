@@ -54,6 +54,8 @@ export function createCard({ name, link }, remove, like, open) {
   return clonePattern;
 }
 
+//Переключатель лайков
+
 export function likeCard(likeBtn) {
   likeBtn.classList.toggle("card__like-button_is-active");
 }
