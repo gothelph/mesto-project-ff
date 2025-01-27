@@ -1,4 +1,10 @@
-import { initialCards, cardCreate } from "./card";
+import {
+  initialCards,
+  createCard,
+  likeCard,
+  openCard,
+  deleteCard,
+} from "./card";
 import { openModal, closeModal, initPopups } from "./modal";
 
 // @todo: Темплейт карточки
@@ -29,7 +35,7 @@ profileEditButton.addEventListener("click", editProfileModalOpen);
 profileAddButton.addEventListener("click", () => openModal(cardPopup));
 
 function renderCard(cardData) {
-  const card = cardCreate(cardData, deleteCard, likeCard, openCard);
+  const card = createCard(cardData, deleteCard, likeCard, openCard);
   placeContainer.prepend(card);
 }
 
@@ -61,20 +67,4 @@ function handleEditProfileFormSubmit(evt) {
 
   closeModal(editPopup);
   profileForm.reset();
-}
-
-//Переключатель лайков
-function likeCard(likeBtn) {
-  likeBtn.classList.toggle("card__like-button_is-active");
-}
-
-function openCard(name, link) {
-  const popup = document.querySelector(".popup_type_image");
-  popup.querySelector(".popup__caption").textContent = name;
-  popup.querySelector(".popup__image").src = link;
-  openModal(popup);
-}
-
-function deleteCard(cardElement) {
-  cardElement.remove();
 }

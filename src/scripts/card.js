@@ -1,3 +1,5 @@
+import { openModal } from "./modal";
+
 export const initialCards = [
   {
     name: "Норвежские фьёрды",
@@ -26,7 +28,8 @@ export const initialCards = [
 ];
 
 // @todo: Функция создания карточки
-export function cardCreate({ name, link }, remove, like, open) {
+
+export function createCard({ name, link }, remove, like, open) {
   const cardTemplate = document.querySelector("#card-template").content;
 
   const clonePattern = cardTemplate
@@ -49,4 +52,22 @@ export function cardCreate({ name, link }, remove, like, open) {
   imgCard.addEventListener("click", () => open(name, link));
 
   return clonePattern;
+}
+
+export function likeCard(likeBtn) {
+  likeBtn.classList.toggle("card__like-button_is-active");
+}
+
+export function openCard(name, link) {
+  const popup = document.querySelector(".popup_type_image");
+  const image = popup.querySelector(".popup__image"); // Получаем элемент изображения
+  popup.querySelector(".popup__caption").textContent = name;
+  image.src = link;
+  // Устанавливаем атрибут alt для изображения
+  image.alt = `Фотография места: ${name}`;
+  openModal(popup);
+}
+
+export function deleteCard(cardElement) {
+  cardElement.remove();
 }
