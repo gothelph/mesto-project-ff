@@ -1,3 +1,4 @@
+import { addLike, deleteCard, deleteLike } from "../api";
 import { openModal } from "./modal";
 
 export const initialCards = [
@@ -37,7 +38,8 @@ function getTemplate() {
 }
 
 export function createCard(
-  { name, link },
+  { name, link, _id, likes = [], owner },
+  profileId,
   { onDeleteCard, onLikeCard, onOpenPreview } = {}
 ) {
   const clonePattern = getTemplate();
@@ -50,11 +52,24 @@ export function createCard(
   imgCard.alt = name;
 
   const likeBtn = clonePattern.querySelector(".card__like-button");
-  likeBtn.addEventListener("click", () => onLikeCard?.(likeBtn));
+  const likeCounter = clonePattern.querySelector(".likes__counter");
+  likeCounter.textContent = likes.length;
+  if (likes.some(({ _id }) => _id === profileId)) {
+    likeBtn.classList.add("card__like-button_is-active");
+  }
+  likeBtn.addEventListener("click", () => {
+    onLikeCard?.(likeBtn, _id, likeCounter);
+  });
 
   // @todo: Функция удаления карточки
   const deleteBtn = clonePattern.querySelector(".card__delete-button");
-  deleteBtn.addEventListener("click", () => onDeleteCard?.(clonePattern));
+
+  if (profileId === owner._id) {
+    clonePattern.setAttribute("data-id", _id);
+    deleteBtn.addEventListener("click", () => onDeleteCard?.(clonePattern));
+  } else {
+    deleteBtn.style.display = "none";
+  }
 
   imgCard.addEventListener("click", () => onOpenPreview?.(name, link));
 
@@ -62,21 +77,36 @@ export function createCard(
 }
 
 //Переключатель лайков
-
-export function onLikeCard(likeBtn) {
+export function onLikeCard(likeBtn, cardId, likeCounter) {
+  if (likeBtn.classList.contains("card__like-button_is-active")) {
+    deleteLike(cardId)
+      .then((updatedLikes) => {
+        likeCounter.textContent = updatedLikes.length;
+      })
+      .catch((err) => console.log(err));
+  } else {
+    addLike(cardId)
+      .then((updatedLikes) => {
+        likeCounter.textContent = updatedLikes.length;
+      })
+      .catch((err) => console.log(err));
+  }
   likeBtn.classList.toggle("card__like-button_is-active");
 }
 
 export function onOpenPreview(name, link) {
   const popup = document.querySelector(".popup_type_image");
-  const image = popup.querySelector(".popup__image"); // Получаем элемент изображения
+  const image = popup.querySelector(".popup__image");
   popup.querySelector(".popup__caption").textContent = name;
   image.src = link;
-  // Устанавливаем атрибут alt для изображения
   image.alt = `Фотография места: ${name}`;
   openModal(popup);
 }
 
+// удаление карточки с сервера
 export function onDeleteCard(cardElement) {
-  cardElement.remove();
+  const cardId = cardElement.getAttribute("data-id");
+  deleteCard(cardId)
+    .then(() => cardElement.remove())
+    .catch((err) => console.log(err));
 }

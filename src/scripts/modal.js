@@ -34,3 +34,15 @@ export function initPopups() {
     });
   });
 }
+
+export function setLoadingState(form) {
+  const submitButton = form.querySelector("button");
+  submitButton.classList.add("popup__button_disabled");
+  submitButton.textContent = "Сохранение...";
+}
+
+export function unSetLoadingState(form) {
+  const submitButton = form.querySelector("button");
+  submitButton.classList.remove("popup__button_disabled");
+  submitButton.textContent = "Сохранить";
+}
