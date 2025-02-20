@@ -20,7 +20,9 @@ const profileAvatar = document.querySelector(".popup_type_avatar");
 const profileImageAvatar = profileImage.querySelector(".profile__image-avatar");
 
 // @todo: вывод карточек
-const popup = document.querySelector(".popup_type_image");
+const popupPreview = document.querySelector(".popup_type_image");
+const popupPreviewImage = popupPreview.querySelector(".popup__image");
+const popupPreviewCaption = popupPreview.querySelector(".popup__caption");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const profileAddButton = document.querySelector(".profile__add-button");
 const profileName = document.querySelector(".profile__title");
@@ -34,11 +36,10 @@ const nameInput = profileForm.querySelector(".popup__input_type_name");
 const jobInput = profileForm.querySelector(".popup__input_type_description");
 
 export function onOpenPreview(name, link) {
-  const image = popup.querySelector(".popup__image");
-  popup.querySelector(".popup__caption").textContent = name;
-  image.src = link;
-  image.alt = `Фотография места: ${name}`;
-  openModal(popup);
+  popupPreviewCaption.textContent = name;
+  popupPreviewImage.src = link;
+  popupPreviewImage.alt = `Фотография места: ${name}`;
+  openModal(popupPreview);
 }
 
 function renderCard(cardData, profileId) {
@@ -118,8 +119,8 @@ function handleEditAvatarFormSubmit(evt) {
 
   setLoadingState(editAvatarForm);
   updateAvatar(url)
-    .then(() => {
-      profileImageAvatar.src = url;
+    .then(({ avatar }) => {
+      profileImageAvatar.src = avatar;
       closeModal(profileAvatar);
       editAvatarForm.reset();
     })
@@ -133,32 +134,25 @@ function handleEditAvatarFormSubmit(evt) {
 
 initPopups();
 
-fetchProfile()
-  .then(({ name, about, avatar, _id }) => {
+Promise.all([fetchProfile(), fetchCards()])
+  .then(([profileInfo, cards]) => {
+    const { name, about, avatar, _id } = profileInfo;
     profileName.textContent = name;
     profileDescription.textContent = about;
     profileImageAvatar.src = avatar;
-    fetchCards()
-      .then((cards) =>
-        cards
-          .toSorted(
-            (a, b) =>
-              //сортировка по времени добавления
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          )
-          .forEach((cards) => renderCard(cards, _id))
-      )
-      .catch((err) => {
-        console.log(err);
-      });
+
+    cards
+      .toSorted((a, b) => {
+        const timestampA = new Date(a.createdAt).getTime();
+        const timestampB = new Date(b.createdAt).getTime();
+        return timestampA - timestampB;
+      })
+      .forEach((cards) => renderCard(cards, _id));
   })
   .catch((err) => {
     console.log(err);
   });
 
-// @todo: Вывести карточки на страницу
-
-//Редактирование профиля
 cardForm.addEventListener("submit", handleAddCardFormSubmit);
 profileForm.addEventListener("submit", handleEditProfileFormSubmit);
 editAvatarForm.addEventListener("submit", handleEditAvatarFormSubmit);
