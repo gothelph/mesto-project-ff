@@ -1,5 +1,4 @@
 import { addLike, deleteCard, deleteLike } from "../api";
-import { openModal } from "./modal";
 
 export const initialCards = [
   {
@@ -78,29 +77,22 @@ export function createCard(
 
 //Переключатель лайков
 export function onLikeCard(likeBtn, cardId, likeCounter) {
-  if (likeBtn.classList.contains("card__like-button_is-active")) {
+  const like = "card__like-button_is-active";
+  if (likeBtn.classList.contains(like)) {
     deleteLike(cardId)
       .then((updatedLikes) => {
         likeCounter.textContent = updatedLikes.length;
+        likeBtn.classList.remove(like);
       })
       .catch((err) => console.log(err));
   } else {
     addLike(cardId)
       .then((updatedLikes) => {
+        likeBtn.classList.add(like);
         likeCounter.textContent = updatedLikes.length;
       })
       .catch((err) => console.log(err));
   }
-  likeBtn.classList.toggle("card__like-button_is-active");
-}
-
-export function onOpenPreview(name, link) {
-  const popup = document.querySelector(".popup_type_image");
-  const image = popup.querySelector(".popup__image");
-  popup.querySelector(".popup__caption").textContent = name;
-  image.src = link;
-  image.alt = `Фотография места: ${name}`;
-  openModal(popup);
 }
 
 // удаление карточки с сервера
